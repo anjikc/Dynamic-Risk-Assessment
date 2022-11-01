@@ -6,24 +6,28 @@ import os
 import json
 from joblib import load
 from scipy.sparse import data
-from common_functions import preprocess_data
+from functions import preprocess_data
 import subprocess
 import sys
+import logging 
+logging.basicConfig(level=logging.INFO, format="%(asctime)-15s %(message)s")
+
 ##################Load config.json and get environment variables
 with open('config.json','r') as f:
     config = json.load(f) 
 
-dataset_csv_path = os.path.join(config['output_folder_path']) 
+model_path = os.path.join(config['prod_deployment_path'])
 test_data_path = os.path.join(config['test_data_path']) 
 
+
 ##################Function to get model predictions
-def model_predictions():
+def model_predictions(data_path):
     #read the deployed model and a test dataset, calculate predictions
     model = load(os.path.join(model_path, "trainedmodel.pkl"))
     encoder = load(os.path.join(model_path, "encoder.pkl"))
     
-    if dataset_path is None: dataset_path = "testdata.csv"
-    df = pd.read_csv(os.path.join(test_data_path, dataset_path))
+    if data_path is None: data_path = "testdata.csv"
+    df = pd.read_csv(os.path.join(test_data_path, data_path))
 
     df_x, df_y, _ = preprocess_data(df, encoder)
 
@@ -75,9 +79,9 @@ def execution_time():
 
 ##################Function to check dependencies
 def outdated_packages_list():
-    outdated_packages = subprocess.check_output(['pip', 'list', '--outdated']).decode(sys.stdout.encoding)
+    outdated = subprocess.check_output(['pip', 'list', '--outdated']).decode(sys.stdout.encoding)
     
-    return str(outdated_packages)
+    return str(outdated)
 
 
 if __name__ == '__main__':
@@ -86,6 +90,7 @@ if __name__ == '__main__':
     dataframe_summary()
     missing_data()
     outdated_packages_list()
+    logging.info("Diagonistics file ran successsfully")
 
 
 

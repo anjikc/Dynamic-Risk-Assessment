@@ -11,6 +11,9 @@ from sklearn.preprocessing import OneHotEncoder
 import json
 from joblib import dump
 from functions import preprocess_data
+import logging
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)-15s %(message)s")
 
 ###################Load config.json and get path variables
 with open('config.json','r') as f:
@@ -26,7 +29,7 @@ def train_model():
     df = pd.read_csv(os.path.join(dataset_csv_path, "finaldata.csv"))
     df_x, df_y, encoder = preprocess_data(df, None)
     
-    x_train, x_test, y_train, y_test = train_test_split(df_x, df_y, test_size=0.20)
+    X_train, X_test, y_train, y_test = train_test_split(df_x, df_y, test_size=0.20)
 
     #use this logistic regression for training
     model = LogisticRegression(C=1.0, class_weight=None, dual=False, fit_intercept=True,
@@ -36,10 +39,10 @@ def train_model():
             warm_start=False)
     
     #fit the logistic regression to your data
-    model.fit(x_train, y_train)
+    model.fit(X_train, y_train)
     
-    print(model.score(x_train, y_train))
-    print(model.score(x_test, y_test))
+    print(model.score(X_train, y_train))
+    print(model.score(X_test, y_test))
     
     #write the trained model to your workspace in a file called trainedmodel.pkl
     dump(model, os.path.join(model_path, "trainedmodel.pkl"))
@@ -48,3 +51,4 @@ def train_model():
 
 if __name__ == "__main__":
     train_model()
+    logging.info("Model training and saving done")

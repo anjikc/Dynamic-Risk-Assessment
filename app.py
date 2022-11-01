@@ -2,7 +2,8 @@ from flask import Flask, session, jsonify, request
 import pandas as pd
 import numpy as np
 import pickle
-from diagnostics import model_predictions, dataframe_summary, missing_data, outdated_packages_list, execution_time,score_model
+from diagnostics import model_predictions, dataframe_summary, missing_data, outdated_packages_list, execution_time
+from scoring import score_model
 import json
 import os
 

@@ -22,11 +22,13 @@ def merge_multiple_dataframe():
     current_path = os.getcwd()
 
     all_files = []
+    csv_file_name=[]
     filenames = os.listdir(input_folder_path)
     for filename in filenames:
 
         if filename.endswith(".csv"):
             all_files.append(os.path.join(current_path, input_folder_path, filename))
+            csv_file_name.append(filename)
 
     df = pd.DataFrame(
         columns=[
@@ -48,7 +50,7 @@ def merge_multiple_dataframe():
     cleaned_df.to_csv("%s/finaldata.csv" % output_folder_path, index=False)
 
     with open(os.path.join(output_folder_path, "ingestedfiles.txt"), "w") as report_file:
-        for line in filenames:
+        for line in csv_file_name:
             report_file.write(line + "\n")
 
 
