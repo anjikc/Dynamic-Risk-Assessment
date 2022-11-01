@@ -48,7 +48,7 @@ def merge_multiple_dataframe():
     cleaned_df.to_csv("%s/finaldata.csv" % output_folder_path, index=False)
 
     with open(os.path.join(output_folder_path, "ingestedfiles.txt"), "w") as report_file:
-        for line in csv_files:
+        for line in filenames:
             report_file.write(line + "\n")
 
 
