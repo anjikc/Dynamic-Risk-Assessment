@@ -19,13 +19,33 @@ output_folder_path = config['output_folder_path']
 #############Function for data ingestion
 def merge_multiple_dataframe():
     #check for datasets, compile them together, and write to an output file
-    csv_files = glob.glob("%s/*.csv" % input_folder_path)
+    current_path = os.getcwd()
 
-    df = pd.concat(map(pd.read_csv, csv_files), ignore_index=True)
+    all_files = []
+    filenames = os.listdir(input_folder_path)
+    for filename in filenames:
 
-    df.drop_duplicates(inplace=True)
+        if filename.endswith(".csv"):
+            all_files.append(os.path.join(current_path, input_folder_path, filename))
 
-    df.to_csv("%s/finaldata.csv" % output_folder_path, index=False)
+    df = pd.DataFrame(
+        columns=[
+            "corporation",
+            "lastmonth_activity",
+            "lastyear_activity",
+            "number_of_employees",
+            "exited",
+        ]
+    )
+
+    for file in all_files:
+        df_temp = pd.read_csv(file)
+        df = pd.concat([df, df_temp])
+
+    # Remove duplicates
+    cleaned_df = df.drop_duplicates()
+
+    cleaned_df.to_csv("%s/finaldata.csv" % output_folder_path, index=False)
 
     with open(os.path.join(output_folder_path, "ingestedfiles.txt"), "w") as report_file:
         for line in csv_files:
